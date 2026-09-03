@@ -1,0 +1,3 @@
+import mongoose from 'mongoose';
+const schema = new mongoose.Schema({ title:{type:String,required:true,trim:true}, slug:{type:String,required:true,unique:true,index:true}, description:{type:String,required:true}, company:{type:String,required:true}, location:{type:String,required:true}, jobType:{type:String,required:true}, salary:String, category:{type:String,required:true,index:true}, requirements:[String], responsibilities:[String], skills:[String], applicationDeadline:Date, status:{type:String,enum:['ACTIVE','CLOSED','DRAFT'],default:'DRAFT',index:true}, createdBy:{type:mongoose.Schema.Types.ObjectId,ref:'User'} },{timestamps:true});
+export default mongoose.models.Job || mongoose.model('Job',schema);

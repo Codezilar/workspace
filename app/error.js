@@ -1,0 +1,1 @@
+'use client';export default function Error({reset}){return <main className="grid min-h-screen place-items-center bg-ink p-5 text-center"><div><p className="text-red-300">Something went wrong</p><button onClick={reset} className="btn btn-primary mt-5">Try again</button></div></main>}
