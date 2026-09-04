@@ -56,7 +56,7 @@ export default async function PaymentPage() {
               <PaymentForm
                 wallet={process.env.PAYMENT_WALLET_ADDRESS || ""}
                 amount={process.env.PAYMENT_AMOUNT || "99"}
-                currency={process.env.PAYMENT_CURRENCY || "USDT"}
+                currency={process.env.PAYMENT_CURRENCY || "BTC"}
               />
             </div>
           </>
