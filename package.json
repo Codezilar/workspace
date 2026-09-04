@@ -1,5 +1,5 @@
 {
-  "name": "vanta-work",
+  "name": "dream-crew-bookings",
   "version": "1.0.0",
   "private": true,
   "scripts": { "dev": "next dev", "build": "next build", "start": "next start", "lint": "next lint", "seed": "node scripts/seed.js" },

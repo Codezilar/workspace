@@ -1,4 +1,4 @@
-# Vanta Work
+# Dream Crew Bookings
 
 A premium job opportunity platform built with Next.js App Router, Clerk, MongoDB/Mongoose, Tailwind, Framer Motion, and Lucide.
 
