@@ -1,2 +1,104 @@
-'use client';import {useState} from 'react';import {useRouter} from 'next/navigation';
-export default function JobForm(){const [open,setOpen]=useState(false),[f,setF]=useState({title:'',company:'',location:'Remote',jobType:'Full-time',salary:'',category:'Engineering',description:'',skills:'',status:'DRAFT'}),[error,setError]=useState(''),r=useRouter();const save=async e=>{e.preventDefault();const b={...f,skills:f.skills.split(',').map(x=>x.trim()).filter(Boolean),requirements:[],responsibilities:[]};const res=await fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});if(res.ok){setOpen(false);r.refresh()}else setError((await res.json()).error||'Could not create job')};if(!open)return <button onClick={()=>setOpen(true)} className="btn btn-primary">Create job</button>;return <form onSubmit={save} className="glass mt-6 grid gap-3 rounded-2xl p-5 md:grid-cols-2">{[['title','Role title'],['company','Company'],['location','Location'],['jobType','Job type'],['salary','Salary'],['category','Category'],['skills','Skills (comma separated)']].map(([k,l])=><label key={k} className="text-sm text-mist">{l}<input required={['title','company','location','category'].includes(k)} className="input mt-1" value={f[k]} onChange={e=>setF({...f,[k]:e.target.value})}/></label>)}<label className="text-sm text-mist md:col-span-2">Description<textarea required minLength="20" className="input mt-1 min-h-28" value={f.description} onChange={e=>setF({...f,description:e.target.value})}/></label><label className="text-sm text-mist">Publish status<select className="input mt-1" value={f.status} onChange={e=>setF({...f,status:e.target.value})}><option>DRAFT</option><option>ACTIVE</option></select></label><div className="flex items-end gap-2"><button className="btn btn-primary">Save job</button><button type="button" onClick={()=>setOpen(false)} className="btn btn-secondary">Cancel</button></div>{error&&<p className="text-red-300 md:col-span-2">{error}</p>}</form>}
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+export default function JobForm() {
+  const [open, setOpen] = useState(false),
+    [f, setF] = useState({
+      title: "",
+      company: "",
+      location: "Remote",
+      jobType: "Full-time",
+      salary: "",
+      category: "Engineering",
+      description: "",
+      skills: "",
+      status: "DRAFT",
+    }),
+    [error, setError] = useState(""),
+    r = useRouter();
+  const save = async (e) => {
+    e.preventDefault();
+    const b = {
+      ...f,
+      skills: f.skills
+        .split(",")
+        .map((x) => x.trim())
+        .filter(Boolean),
+      requirements: [],
+      responsibilities: [],
+    };
+    const res = await fetch("/api/jobs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(b),
+    });
+    if (res.ok) {
+      setOpen(false);
+      r.refresh();
+    } else setError((await res.json()).error || "Could not create job");
+  };
+  if (!open)
+    return (
+      <button onClick={() => setOpen(true)} className="btn btn-primary">
+        Create job
+      </button>
+    );
+  return (
+    <form
+      onSubmit={save}
+      className="glass mt-6 grid gap-3 rounded-2xl p-5 md:grid-cols-2"
+    >
+      {[
+        ["title", "Role title"],
+        ["company", "Company"],
+        ["location", "Location"],
+        ["jobType", "Job type"],
+        ["salary", "Salary"],
+        ["category", "Category"],
+        ["skills", "Skills (comma separated)"],
+      ].map(([k, l]) => (
+        <label key={k} className="text-sm text-mist">
+          {l}
+          <input
+            required={["title", "company", "location", "category"].includes(k)}
+            className="input mt-1"
+            value={f[k]}
+            onChange={(e) => setF({ ...f, [k]: e.target.value })}
+          />
+        </label>
+      ))}
+      <label className="text-sm text-mist md:col-span-2">
+        Description
+        <textarea
+          required
+          minLength="20"
+          className="input mt-1 min-h-28"
+          value={f.description}
+          onChange={(e) => setF({ ...f, description: e.target.value })}
+        />
+      </label>
+      <label className="text-sm text-mist">
+        Publish status
+        <select
+          className="input mt-1"
+          value={f.status}
+          onChange={(e) => setF({ ...f, status: e.target.value })}
+        >
+          <option>DRAFT</option>
+          <option>ACTIVE</option>
+        </select>
+      </label>
+      <div className="flex items-end gap-2">
+        <button className="btn btn-primary">Save job</button>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="btn btn-secondary"
+        >
+          Cancel
+        </button>
+      </div>
+      {error && <p className="text-red-300 md:col-span-2">{error}</p>}
+    </form>
+  );
+}

@@ -1,4 +1,35 @@
-import {NextResponse} from 'next/server'; import {getDbUser,isAdmin} from '@/lib/auth'; import {connectDB} from '@/lib/db'; import Job from '@/models/Job'; import {jobSchema} from '@/lib/validators';
-const slugify=x=>x.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-export async function GET(){const user=await getDbUser();if(!user||user.accessStatus!=='ACTIVE')return NextResponse.json({error:'Forbidden'},{status:403});await connectDB();return NextResponse.json(await Job.find({status:'ACTIVE'}).lean())}
-export async function POST(req){const user=await getDbUser();if(!isAdmin(user))return NextResponse.json({error:'Forbidden'},{status:403});try{await connectDB();const data=jobSchema.parse(await req.json());const slug=`${slugify(data.title)}-${Date.now().toString(36)}`;const job=await Job.create({...data,slug,createdBy:user._id});return NextResponse.json(job,{status:201})}catch(e){return NextResponse.json({error:e?.issues?.[0]?.message||'Invalid job'},{status:400})}}
+import { NextResponse } from "next/server";
+import { getDbUser, isAdmin } from "@/lib/auth";
+import { connectDB } from "@/lib/db";
+import Job from "@/models/Job";
+import { jobSchema } from "@/lib/validators";
+const slugify = (x) =>
+  x
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+export async function GET() {
+  const user = await getDbUser();
+  if (!user || user.accessStatus !== "ACTIVE")
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  await connectDB();
+  return NextResponse.json(await Job.find({ status: "ACTIVE" }).lean());
+}
+export async function POST(req) {
+  const user = await getDbUser();
+  if (!isAdmin(user))
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  try {
+    await connectDB();
+    const data = jobSchema.parse(await req.json());
+    const slug = `${slugify(data.title)}-${Date.now().toString(36)}`;
+    const job = await Job.create({ ...data, slug, createdBy: user._id });
+    return NextResponse.json(job, { status: 201 });
+  } catch (e) {
+    return NextResponse.json(
+      { error: e?.issues?.[0]?.message || "Invalid job" },
+      { status: 400 },
+    );
+  }
+}

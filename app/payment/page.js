@@ -1,2 +1,67 @@
-import {Clock3} from 'lucide-react'; import {getDbUser} from '@/lib/auth'; import {redirect} from 'next/navigation'; import Payment from '@/models/Payment'; import {connectDB} from '@/lib/db'; import PaymentForm from '@/components/payment/PaymentForm';
-export default async function PaymentPage(){const user=await getDbUser();if(!user)redirect('/sign-in');if(user.accessStatus==='ACTIVE')redirect('/dashboard');await connectDB();const [pending,last]=await Promise.all([Payment.findOne({userId:user._id,status:'PENDING'}),Payment.findOne({userId:user._id}).sort({createdAt:-1})]);return <main className="grid-bg min-h-screen px-5 py-12"><div className="mx-auto max-w-4xl"><p className="text-sm font-bold">DREAM <span className="text-acid">CREW</span> BOOKINGS</p>{pending?<div className="mt-20 glass mx-auto max-w-lg rounded-[2rem] p-9 text-center"><span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-acid/15 text-acid"><Clock3 size={28}/></span><p className="mt-7 text-acid">PAYMENT SUBMITTED</p><h1 className="mt-3 text-3xl font-semibold">Waiting for admin approval.</h1><p className="mt-4 leading-7 text-mist">Your payment proof has been sent and is processing. An administrator will review it before activating your workspace.</p><p className="mt-5 text-sm text-mist">You cannot submit another payment while this review is pending.</p></div>:<><p className="mt-16 text-acid">ACTIVATE YOUR ACCESS</p><h1 className="mt-3 text-4xl font-semibold md:text-6xl">Your workspace is almost ready.</h1><p className="mt-4 max-w-xl text-mist">Activate your membership to access curated roles, a professional application hub, and career tracking.</p>{last?.status==='REJECTED'&&<p className="mt-6 rounded-xl border border-red-400/30 bg-red-400/10 p-4 text-red-200">Your previous payment was not approved. {last.adminNote||'Please verify your details and resubmit.'}</p>}<div className="mt-10"><PaymentForm wallet={process.env.PAYMENT_WALLET_ADDRESS||''} amount={process.env.PAYMENT_AMOUNT||'99'} currency={process.env.PAYMENT_CURRENCY||'USDT'}/></div></>}</div></main>}
+import { Clock3 } from "lucide-react";
+import { getDbUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import Payment from "@/models/Payment";
+import { connectDB } from "@/lib/db";
+import PaymentForm from "@/components/payment/PaymentForm";
+export default async function PaymentPage() {
+  const user = await getDbUser();
+  if (!user) redirect("/sign-in");
+  if (user.accessStatus === "ACTIVE") redirect("/dashboard");
+  await connectDB();
+  const [pending, last] = await Promise.all([
+    Payment.findOne({ userId: user._id, status: "PENDING" }),
+    Payment.findOne({ userId: user._id }).sort({ createdAt: -1 }),
+  ]);
+  return (
+    <main className="grid-bg min-h-screen px-5 py-12">
+      <div className="mx-auto max-w-4xl">
+        <p className="text-sm font-bold">
+          DREAM <span className="text-acid">CREW</span> BOOKINGS
+        </p>
+        {pending ? (
+          <div className="mt-20 glass mx-auto max-w-lg rounded-[2rem] p-9 text-center">
+            <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-acid/15 text-acid">
+              <Clock3 size={28} />
+            </span>
+            <p className="mt-7 text-acid">PAYMENT SUBMITTED</p>
+            <h1 className="mt-3 text-3xl font-semibold">
+              Waiting for admin approval.
+            </h1>
+            <p className="mt-4 leading-7 text-mist">
+              Your payment proof has been sent and is processing. An
+              administrator will review it before activating your workspace.
+            </p>
+            <p className="mt-5 text-sm text-mist">
+              You cannot submit another payment while this review is pending.
+            </p>
+          </div>
+        ) : (
+          <>
+            <p className="mt-16 text-acid">ACTIVATE YOUR ACCESS</p>
+            <h1 className="mt-3 text-4xl font-semibold md:text-6xl">
+              Your workspace is almost ready.
+            </h1>
+            <p className="mt-4 max-w-xl text-mist">
+              Activate your membership to access curated roles, a professional
+              application hub, and career tracking.
+            </p>
+            {last?.status === "REJECTED" && (
+              <p className="mt-6 rounded-xl border border-red-400/30 bg-red-400/10 p-4 text-red-200">
+                Your previous payment was not approved.{" "}
+                {last.adminNote || "Please verify your details and resubmit."}
+              </p>
+            )}
+            <div className="mt-10">
+              <PaymentForm
+                wallet={process.env.PAYMENT_WALLET_ADDRESS || ""}
+                amount={process.env.PAYMENT_AMOUNT || "99"}
+                currency={process.env.PAYMENT_CURRENCY || "USDT"}
+              />
+            </div>
+          </>
+        )}
+      </div>
+    </main>
+  );
+}

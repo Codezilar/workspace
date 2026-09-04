@@ -1,2 +1,55 @@
-'use client';import {useState} from 'react';import {useRouter} from 'next/navigation';
-export default function ApplyForm({jobId}){const [coverLetter,setCoverLetter]=useState(''),[resume,setResume]=useState(''),[message,setMessage]=useState(''),[loading,setLoading]=useState(false);const router=useRouter();const submit=async e=>{e.preventDefault();setLoading(true);const r=await fetch('/api/applications',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jobId,coverLetter,resume})});setMessage(r.ok?'Application sent successfully.':(await r.json()).error||'Unable to submit application.');setLoading(false);if(r.ok)router.refresh()};return <form onSubmit={submit} className="glass mt-8 rounded-3xl p-6"><h2 className="text-xl font-semibold">Apply to this role</h2><label className="mt-5 block text-sm text-mist">Cover letter<textarea required minLength="30" className="input mt-2 min-h-40" value={coverLetter} onChange={e=>setCoverLetter(e.target.value)} placeholder="Tell the hiring team why you are a great fit."/></label><label className="mt-4 block text-sm text-mist">Resume URL (optional)<input type="url" className="input mt-2" value={resume} onChange={e=>setResume(e.target.value)}/></label>{message&&<p className="mt-4 text-sm text-acid">{message}</p>}<button disabled={loading} className="btn btn-primary mt-6">{loading?'Sending…':'Submit application'}</button></form>}
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+export default function ApplyForm({ jobId }) {
+  const [coverLetter, setCoverLetter] = useState(""),
+    [resume, setResume] = useState(""),
+    [message, setMessage] = useState(""),
+    [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const submit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const r = await fetch("/api/applications", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jobId, coverLetter, resume }),
+    });
+    setMessage(
+      r.ok
+        ? "Application sent successfully."
+        : (await r.json()).error || "Unable to submit application.",
+    );
+    setLoading(false);
+    if (r.ok) router.refresh();
+  };
+  return (
+    <form onSubmit={submit} className="glass mt-8 rounded-3xl p-6">
+      <h2 className="text-xl font-semibold">Apply to this role</h2>
+      <label className="mt-5 block text-sm text-mist">
+        Cover letter
+        <textarea
+          required
+          minLength="30"
+          className="input mt-2 min-h-40"
+          value={coverLetter}
+          onChange={(e) => setCoverLetter(e.target.value)}
+          placeholder="Tell the hiring team why you are a great fit."
+        />
+      </label>
+      <label className="mt-4 block text-sm text-mist">
+        Resume URL (optional)
+        <input
+          type="url"
+          className="input mt-2"
+          value={resume}
+          onChange={(e) => setResume(e.target.value)}
+        />
+      </label>
+      {message && <p className="mt-4 text-sm text-acid">{message}</p>}
+      <button disabled={loading} className="btn btn-primary mt-6">
+        {loading ? "Sending…" : "Submit application"}
+      </button>
+    </form>
+  );
+}

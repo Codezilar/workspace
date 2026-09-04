@@ -1,2 +1,44 @@
-import {notFound} from 'next/navigation'; import AppShell from '@/components/layout/AppShell'; import Badge from '@/components/ui/Badge'; import ApplyForm from '@/components/jobs/ApplyForm'; import {requireActiveUser} from '@/lib/auth'; import {connectDB} from '@/lib/db'; import Job from '@/models/Job';
-export default async function JobDetail({params}){await requireActiveUser();await connectDB();const job=await Job.findById((await params).id).lean();if(!job||job.status!=='ACTIVE')notFound();return <AppShell><Badge tone="blue">{job.category}</Badge><h1 className="mt-5 text-4xl font-semibold">{job.title}</h1><p className="mt-3 text-lg text-mist">{job.company} · {job.location} · {job.jobType}</p><p className="mt-5 text-xl text-acid">{job.salary}</p><div className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr]"><article className="prose prose-invert max-w-none"><h2>About the role</h2><p className="whitespace-pre-line leading-7 text-mist">{job.description}</p><h2>Requirements</h2><ul>{job.requirements.map(x=><li key={x}>{x}</li>)}</ul><h2>Skills</h2><div className="flex flex-wrap gap-2">{job.skills.map(x=><Badge key={x}>{x}</Badge>)}</div></article><ApplyForm jobId={job._id.toString()}/></div></AppShell>}
+import { notFound } from "next/navigation";
+import AppShell from "@/components/layout/AppShell";
+import Badge from "@/components/ui/Badge";
+import ApplyForm from "@/components/jobs/ApplyForm";
+import { requireActiveUser } from "@/lib/auth";
+import { connectDB } from "@/lib/db";
+import Job from "@/models/Job";
+export default async function JobDetail({ params }) {
+  await requireActiveUser();
+  await connectDB();
+  const job = await Job.findById((await params).id).lean();
+  if (!job || job.status !== "ACTIVE") notFound();
+  return (
+    <AppShell>
+      <Badge tone="blue">{job.category}</Badge>
+      <h1 className="mt-5 text-4xl font-semibold">{job.title}</h1>
+      <p className="mt-3 text-lg text-mist">
+        {job.company} · {job.location} · {job.jobType}
+      </p>
+      <p className="mt-5 text-xl text-acid">{job.salary}</p>
+      <div className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
+        <article className="prose prose-invert max-w-none">
+          <h2>About the role</h2>
+          <p className="whitespace-pre-line leading-7 text-mist">
+            {job.description}
+          </p>
+          <h2>Requirements</h2>
+          <ul>
+            {job.requirements.map((x) => (
+              <li key={x}>{x}</li>
+            ))}
+          </ul>
+          <h2>Skills</h2>
+          <div className="flex flex-wrap gap-2">
+            {job.skills.map((x) => (
+              <Badge key={x}>{x}</Badge>
+            ))}
+          </div>
+        </article>
+        <ApplyForm jobId={job._id.toString()} />
+      </div>
+    </AppShell>
+  );
+}

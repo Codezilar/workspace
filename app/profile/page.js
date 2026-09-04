@@ -1,2 +1,37 @@
-import AppShell from '@/components/layout/AppShell'; import {requireActiveUser} from '@/lib/auth';
-export default async function Profile(){const u=await requireActiveUser();return <AppShell><p className="text-acid">PROFILE</p><h1 className="mt-2 text-3xl font-semibold">Your professional identity.</h1><div className="glass mt-8 max-w-3xl rounded-3xl p-7"><div className="grid gap-6 sm:grid-cols-2">{[['Name',u.name],['Email',u.email],['Location',u.location||'Not set'],['Phone',u.phone||'Not set'],['Availability',u.availability||'Not set'],['Portfolio',u.portfolio||'Not set']].map(([l,v])=><div key={l}><p className="text-xs uppercase tracking-wider text-mist">{l}</p><p className="mt-2">{v}</p></div>)}</div><div className="mt-7 border-t border-white/10 pt-6"><p className="text-xs uppercase tracking-wider text-mist">Bio</p><p className="mt-2 leading-7 text-slate-200">{u.bio||'Add a bio using the profile API to present your experience to administrators.'}</p></div></div></AppShell>}
+import AppShell from "@/components/layout/AppShell";
+import { requireActiveUser } from "@/lib/auth";
+export default async function Profile() {
+  const u = await requireActiveUser();
+  return (
+    <AppShell>
+      <p className="text-acid">PROFILE</p>
+      <h1 className="mt-2 text-3xl font-semibold">
+        Your professional identity.
+      </h1>
+      <div className="glass mt-8 max-w-3xl rounded-3xl p-7">
+        <div className="grid gap-6 sm:grid-cols-2">
+          {[
+            ["Name", u.name],
+            ["Email", u.email],
+            ["Location", u.location || "Not set"],
+            ["Phone", u.phone || "Not set"],
+            ["Availability", u.availability || "Not set"],
+            ["Portfolio", u.portfolio || "Not set"],
+          ].map(([l, v]) => (
+            <div key={l}>
+              <p className="text-xs uppercase tracking-wider text-mist">{l}</p>
+              <p className="mt-2">{v}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-7 border-t border-white/10 pt-6">
+          <p className="text-xs uppercase tracking-wider text-mist">Bio</p>
+          <p className="mt-2 leading-7 text-slate-200">
+            {u.bio ||
+              "Add a bio using the profile API to present your experience to administrators."}
+          </p>
+        </div>
+      </div>
+    </AppShell>
+  );
+}

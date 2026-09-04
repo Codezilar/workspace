@@ -1,2 +1,56 @@
-import {NextResponse} from 'next/server'; import {getDbUser,isAdmin} from '@/lib/auth'; import {connectDB} from '@/lib/db'; import Payment from '@/models/Payment'; import User from '@/models/User'; import AuditLog from '@/models/AuditLog';
-export async function PATCH(req,{params}){try{const admin=await getDbUser();if(!isAdmin(admin))return NextResponse.json({error:'Only administrators can review payments.'},{status:403});const {status,adminNote=''}=await req.json();if(!['APPROVED','REJECTED'].includes(status))return NextResponse.json({error:'Choose either APPROVED or REJECTED.'},{status:400});await connectDB();const id=(await params).id;const payment=await Payment.findOneAndUpdate({_id:id,status:'PENDING'},{status,adminNote,reviewedAt:new Date(),reviewedBy:admin._id},{new:true});if(!payment){const existing=await Payment.findById(id).select('status');return NextResponse.json({error:existing?'This payment has already been reviewed.':'Payment not found.'},{status:existing?409:404})}await User.findByIdAndUpdate(payment.userId,{accessStatus:status==='APPROVED'?'ACTIVE':'PENDING_PAYMENT'});await AuditLog.create({actorId:admin._id,action:`PAYMENT_${status}`,entityType:'Payment',entityId:payment._id.toString()});return NextResponse.json({ok:true,status:payment.status})}catch(error){console.error('Payment review failed:',error);return NextResponse.json({error:'Unable to save the payment review. Please try again.'},{status:500})}}
+import { NextResponse } from "next/server";
+import { getDbUser, isAdmin } from "@/lib/auth";
+import { connectDB } from "@/lib/db";
+import Payment from "@/models/Payment";
+import User from "@/models/User";
+import AuditLog from "@/models/AuditLog";
+export async function PATCH(req, { params }) {
+  try {
+    const admin = await getDbUser();
+    if (!isAdmin(admin))
+      return NextResponse.json(
+        { error: "Only administrators can review payments." },
+        { status: 403 },
+      );
+    const { status, adminNote = "" } = await req.json();
+    if (!["APPROVED", "REJECTED"].includes(status))
+      return NextResponse.json(
+        { error: "Choose either APPROVED or REJECTED." },
+        { status: 400 },
+      );
+    await connectDB();
+    const id = (await params).id;
+    const payment = await Payment.findOneAndUpdate(
+      { _id: id, status: "PENDING" },
+      { status, adminNote, reviewedAt: new Date(), reviewedBy: admin._id },
+      { new: true },
+    );
+    if (!payment) {
+      const existing = await Payment.findById(id).select("status");
+      return NextResponse.json(
+        {
+          error: existing
+            ? "This payment has already been reviewed."
+            : "Payment not found.",
+        },
+        { status: existing ? 409 : 404 },
+      );
+    }
+    await User.findByIdAndUpdate(payment.userId, {
+      accessStatus: status === "APPROVED" ? "ACTIVE" : "PENDING_PAYMENT",
+    });
+    await AuditLog.create({
+      actorId: admin._id,
+      action: `PAYMENT_${status}`,
+      entityType: "Payment",
+      entityId: payment._id.toString(),
+    });
+    return NextResponse.json({ ok: true, status: payment.status });
+  } catch (error) {
+    console.error("Payment review failed:", error);
+    return NextResponse.json(
+      { error: "Unable to save the payment review. Please try again." },
+      { status: 500 },
+    );
+  }
+}

@@ -1,2 +1,50 @@
-import AppShell from '@/components/layout/AppShell'; import StatCard from '@/components/dashboard/StatCard'; import JobCard from '@/components/jobs/JobCard'; import {requireActiveUser} from '@/lib/auth'; import {connectDB} from '@/lib/db'; import Job from '@/models/Job'; import Application from '@/models/Application';
-export default async function Dashboard(){const user=await requireActiveUser();await connectDB();const [jobs,total,pending,accepted]=await Promise.all([Job.find({status:'ACTIVE'}).sort({createdAt:-1}).limit(3).lean(),Application.countDocuments({userId:user._id}),Application.countDocuments({userId:user._id,status:{$in:['SUBMITTED','UNDER_REVIEW','SHORTLISTED']}}),Application.countDocuments({userId:user._id,status:'ACCEPTED'})]);return <AppShell><p className="text-acid">YOUR WORKSPACE</p><h1 className="mt-2 text-3xl font-semibold">Welcome back, {user.name.split(' ')[0]}.</h1><p className="mt-2 text-mist">Your next opportunity is waiting.</p><div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><StatCard label="Available jobs" value={await Job.countDocuments({status:'ACTIVE'})} accent/><StatCard label="Applications" value={total}/><StatCard label="In progress" value={pending}/><StatCard label="Accepted" value={accepted}/></div><div className="mt-12 flex items-center justify-between"><h2 className="text-xl font-semibold">Fresh opportunities</h2><a href="/jobs" className="text-sm text-acid">Browse all →</a></div><div className="mt-5 grid gap-5 lg:grid-cols-3">{jobs.map(j=><JobCard key={j._id} job={j}/>)}</div></AppShell>}
+import AppShell from "@/components/layout/AppShell";
+import StatCard from "@/components/dashboard/StatCard";
+import JobCard from "@/components/jobs/JobCard";
+import { requireActiveUser } from "@/lib/auth";
+import { connectDB } from "@/lib/db";
+import Job from "@/models/Job";
+import Application from "@/models/Application";
+export default async function Dashboard() {
+  const user = await requireActiveUser();
+  await connectDB();
+  const [jobs, total, pending, accepted] = await Promise.all([
+    Job.find({ status: "ACTIVE" }).sort({ createdAt: -1 }).limit(3).lean(),
+    Application.countDocuments({ userId: user._id }),
+    Application.countDocuments({
+      userId: user._id,
+      status: { $in: ["SUBMITTED", "UNDER_REVIEW", "SHORTLISTED"] },
+    }),
+    Application.countDocuments({ userId: user._id, status: "ACCEPTED" }),
+  ]);
+  return (
+    <AppShell>
+      <p className="text-acid">YOUR WORKSPACE</p>
+      <h1 className="mt-2 text-3xl font-semibold">
+        Welcome back, {user.name.split(" ")[0]}.
+      </h1>
+      <p className="mt-2 text-mist">Your next opportunity is waiting.</p>
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          label="Available jobs"
+          value={await Job.countDocuments({ status: "ACTIVE" })}
+          accent
+        />
+        <StatCard label="Applications" value={total} />
+        <StatCard label="In progress" value={pending} />
+        <StatCard label="Accepted" value={accepted} />
+      </div>
+      <div className="mt-12 flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Fresh opportunities</h2>
+        <a href="/jobs" className="text-sm text-acid">
+          Browse all →
+        </a>
+      </div>
+      <div className="mt-5 grid gap-5 lg:grid-cols-3">
+        {jobs.map((j) => (
+          <JobCard key={j._id} job={j} />
+        ))}
+      </div>
+    </AppShell>
+  );
+}
