@@ -48,7 +48,7 @@ export default function PaymentForm({ wallet, amount, currency }) {
       <div className="glass rounded-3xl p-6">
         <p className="text-sm text-mist">Platform access</p>
         <p className="mt-2 text-4xl font-semibold">
-          {currency} {amount}
+          {amount}$ worth of {currency} transfer
         </p>
         <div className="mt-8 border-t border-white/10 pt-6">
           <p className="text-sm text-mist">Send to this wallet</p>
@@ -79,7 +79,7 @@ export default function PaymentForm({ wallet, amount, currency }) {
         <h2 className="text-xl font-semibold">Submit payment proof</h2>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {[
-            ["Amount paid", "amount", "number"],
+            ["Amount paid is usd", "amount", "number"],
             ["Payment method", "paymentMethod", "text"],
             ["Currency", "currency", "text"],
             ["Transaction / reference hash", "transactionHash", "text"],
