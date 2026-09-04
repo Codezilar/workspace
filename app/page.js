@@ -11,6 +11,7 @@ import Navbar from "@/components/layout/Navbar";
 import Reveal from "@/components/ui/Reveal";
 import JobCard from "@/components/jobs/JobCard";
 import Badge from "@/components/ui/Badge";
+import BookingJourney from "@/components/landing/BookingJourney";
 import { connectDB } from "@/lib/db";
 import Job from "@/models/Job";
 export default async function Home() {
@@ -60,7 +61,7 @@ export default async function Home() {
             <div className="grid gap-4 md:grid-cols-3">
               {[
                 ["Open roles", "128"],
-                ["Your applications", "12"],
+                ["Applications", "12"],
                 ["New this week", "34"],
               ].map(([x, n]) => (
                 <div
@@ -136,6 +137,7 @@ export default async function Home() {
             </div>
           </div>
         </section>
+        <BookingJourney />
         <section id="access" className="mx-auto max-w-7xl px-5 py-24">
           <div className="glass rounded-[2rem] p-8 md:p-14">
             <ShieldCheck className="text-acid" size={32} />

@@ -3,6 +3,8 @@ const schema = new mongoose.Schema(
   {
     clerkId: { type: String, required: true, unique: true, index: true },
     email: { type: String, required: true, index: true },
+    // Retained for compatibility with the existing MongoDB unique index.
+    referralCode: String,
     name: { type: String, default: "" },
     image: String,
     phone: String,

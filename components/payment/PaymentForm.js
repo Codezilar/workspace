@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Copy, Check } from "lucide-react";
+import Image from "next/image";
 export default function PaymentForm({ wallet, amount, currency }) {
   const [form, setForm] = useState({
       amount,
@@ -72,6 +73,7 @@ export default function PaymentForm({ wallet, amount, currency }) {
           A platform administrator will review it before activating your
           workspace.
         </p>
+        <Image src={"/wallet.jpeg"} alt="" width={400} height={400} className="mx-auto mt-8 rounded-xl" />
       </div>
       <form onSubmit={submit} className="glass rounded-3xl p-6">
         <h2 className="text-xl font-semibold">Submit payment proof</h2>
